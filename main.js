@@ -82,7 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if(parentLi) parentLi.classList.add('open');
     });
     
-    courseContainer.innerHTML = '';
+    // Correctly clear only the course cards, leaving the loader intact
+    const existingCards = courseContainer.querySelectorAll('.course-card');
+    existingCards.forEach(card => card.remove());
+    
     currentPage = 1;
     totalPages = 1;
     fetchAndDisplayCourses(currentPage);
@@ -111,16 +114,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!response.ok) throw new Error(`Network response was not ok`);
       const data = await response.json();
       
-      if (page === 1) totalPages = data.totalPages;
+      if (page === 1) {
+        totalPages = data.totalPages;
+      }
+      
       displayCourses(data.items);
-      currentPage++;
+      currentPage++; 
+
     } catch (error) {
       console.error('Fetch error:', error);
-      loadingIndicator.innerHTML = '<span>Failed to load courses.</span>';
-      totalPages = page;
+      loadingIndicator.innerHTML = '<span>Failed to load courses. Please try scrolling again.</span>';
     } finally {
       isLoading = false;
       loadingIndicator.classList.remove('loading');
+      if (currentPage > totalPages) {
+          loadingIndicator.style.display = 'none';
+      }
     }
   }
 
@@ -129,7 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (filteredCourses.length === 0 && currentPage === 1) {
       courseContainer.innerHTML = '<p class="no-courses-msg">No courses found in this category.</p>';
+      loadingIndicator.style.display = 'none';
       return;
+    }
+
+    if(filteredCourses.length > 0) {
+        loadingIndicator.style.display = 'flex';
+        loadingIndicator.innerHTML = '<div class="spinner"></div>';
     }
 
     filteredCourses.forEach(course => {
@@ -160,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       `;
-      courseContainer.appendChild(courseCard);
+      courseContainer.insertBefore(courseCard, loadingIndicator);
     });
   }
 
