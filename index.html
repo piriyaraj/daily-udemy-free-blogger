@@ -3,12 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
+  <title>Real Discount - Daily Free Courses</title>
   <link href='/style.css' rel='stylesheet'>
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
+  <h1>Today's Free Courses</h1>
+  <div id="course-container"></div>
+  <div id="pagination-controls">
+    <button id="prev-page" disabled>Previous</button>
+    <span id="page-info">Page 1</span>
+    <button id="next-page">Next</button>
+  </div>
   <script defer type="text/javascript" src="/main.js"></script>
 </body>
 </html>
