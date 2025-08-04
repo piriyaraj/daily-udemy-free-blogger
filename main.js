@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <span class="price-sale">$${course.sale_price.toFixed(2)}</span>
             </div>
           </div>
+          <a href="${course.url}" target="_blank" rel="noopener noreferrer" class="join-button">Join Now</a>
         </div>
       `;
       courseContainer.insertBefore(courseCard, loadingIndicator);

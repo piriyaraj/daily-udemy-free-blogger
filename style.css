@@ -11,38 +11,104 @@
     --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Base Styles & Main Layout (Unchanged) */
+/* Base Styles & Main Layout (Largely Unchanged) */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--font-body); background-color: var(--background-color); color: var(--text-color); line-height: 1.5; }
 a { text-decoration: none; color: inherit; }
 .site-container { display: grid; grid-template-areas: "header header" "sidebar main" "footer footer"; grid-template-rows: var(--header-height) 1fr auto; grid-template-columns: var(--sidebar-width) 1fr; min-height: 100vh; }
 .main-content { grid-area: main; padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; align-content: start; }
+/* ... other layout styles ... */
 
-/* Loading Indicator - Corrected Visibility */
-#loading-indicator {
-    display: none; /* Hidden by default */
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+
+/* Course Card - Tweaked for Join Button */
+.course-card {
+    background-color: var(--card-background);
+    border-radius: var(--card-border-radius);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.card-image-link img {
     width: 100%;
-    grid-column: 1 / -1; /* Ensure it spans the full width of the grid */
+    height: 180px;
+    object-fit: cover;
+    display: block;
 }
-#loading-indicator.loading {
-    display: flex; /* Shown only when loading class is present */
-}
-.spinner {
-    border: 4px solid rgba(255, 255, 255, 0.1);
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border-left-color: var(--primary-color);
-    animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
 
-/* All other styles (Header, Sidebar, Footer, Cards, Responsive) remain the same */
+.card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-title-link h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+.card-title-link:hover h3 { color: var(--primary-color); }
+
+.course-category {
+    font-size: 0.85rem;
+    color: var(--text-color-muted);
+    margin-bottom: 15px;
+}
+.course-category .category-tag-link:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+.course-category span { margin: 0 5px; }
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px; /* Space above the button */
+}
+
+.course-stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: var(--text-color-muted);
+}
+.course-stats span { display: flex; align-items: center; gap: 5px; }
+.material-symbols-outlined { font-size: 18px; }
+
+.course-price { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.price-original { text-decoration: line-through; color: var(--text-color-muted); font-size: 0.9rem; }
+.price-sale { color: #2ecc71; font-size: 1.2rem; }
+
+.join-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: auto; /* Pushes the button to the bottom */
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.join-button:hover {
+    background-color: #3a7ac8;
+    transform: scale(1.02);
+}
+
+/* Other Styles (Sidebar, Footer, etc. - Unchanged) */
 .site-header { grid-area: header; background-color: #212429; box-shadow: 0 2px 5px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
-.menu-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--text-color); }
 .sidebar { grid-area: sidebar; background-color: #212429; padding: 20px; transition: transform 0.3s ease-in-out; overflow-y: auto; }
 .site-footer { grid-area: footer; background-color: #212429; padding: 40px 20px; }
 #sidebar-category-list, .submenu { list-style: none; }
@@ -61,21 +127,8 @@ a { text-decoration: none; color: inherit; }
 .footer-column a { display: block; color: var(--text-color-muted); margin-bottom: 10px; transition: color 0.2s; }
 .footer-column a:hover { color: var(--primary-color); }
 .copyright { margin-top: 40px; border-top: 1px solid #3a3f47; padding-top: 30px; }
-.course-card { background-color: var(--card-background); border-radius: var(--card-border-radius); overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; flex-direction: column; }
-.course-card:hover { transform: scale(1.03); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-.card-image-link img { width: 100%; height: 180px; object-fit: cover; display: block; }
-.card-content { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-.card-title-link h3 { font-size: 1.2rem; font-weight: 600; color: var(--text-color); line-height: 1.4; margin-bottom: 10px; }
-.card-title-link:hover h3 { color: var(--primary-color); }
-.course-category { font-size: 0.85rem; color: var(--text-color-muted); margin-bottom: 15px; }
-.course-category .category-tag-link { color: var(--text-color-muted); transition: color 0.2s; }
-.course-category .category-tag-link:hover { color: var(--primary-color); text-decoration: underline; }
-.course-category span { margin: 0 5px; }
-.card-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid #3a3f47; display: flex; justify-content: space-between; align-items: center; }
-.course-stats { display: flex; align-items: center; gap: 15px; font-size: 0.9rem; color: var(--text-color-muted); }
-.course-stats span { display: flex; align-items: center; gap: 5px; }
-.material-symbols-outlined { font-size: 18px; }
-.course-price { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.price-original { text-decoration: line-through; color: var(--text-color-muted); font-size: 0.9rem; }
-.price-sale { color: #2ecc71; font-size: 1.2rem; }
-@media (max-width: 768px) { .site-container { grid-template-areas: "header" "main" "footer"; grid-template-columns: 1fr; } .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100%; transform: translateX(-100%); z-index: 1002; box-shadow: 2px 0 8px rgba(0,0,0,0.5); } .sidebar.is-open { transform: translateX(0); } .menu-toggle { display: block; } }
+#loading-indicator { display: none; justify-content: center; align-items: center; padding: 20px; width: 100%; grid-column: 1 / -1; }
+#loading-indicator.loading { display: flex; }
+.spinner { border: 4px solid rgba(255, 255, 255, 0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 768px) { .site-container { grid-template-areas: "header" "main" "footer"; grid-template-columns: 1fr; } .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100%; transform: translateX(-100%); z-index: 1002; } .sidebar.is-open { transform: translateX(0); } .menu-toggle { display: block; } }
