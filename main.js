@@ -1,91 +1,126 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // --- Global State & Elements ---
+  const sidebar = document.querySelector('.sidebar');
   const courseContainer = document.getElementById('course-container');
-  const prevButton = document.getElementById('prev-page');
-  const nextButton = document.getElementById('next-page');
-  const pageInfo = document.getElementById('page-info');
-
+  const loadingIndicator = document.getElementById('loading-indicator');
+  
+  let currentCategory = 'All Courses';
   let currentPage = 1;
+  let totalPages = 1;
+  let isLoading = false;
   const limit = 14;
-
-  // Using the direct API endpoint as requested.
-  // This will likely cause a CORS error in the browser.
   const API_BASE_URL = 'https://cdn.real.discount/api/courses';
 
-  async function fetchCourses(page) {
-    const url = `${API_BASE_URL}?page=${page}&limit=${limit}&sortBy=sale_start`;
+  // --- Functions ---
+  
+  function handleCategoryChange(newCategory) {
+    if (!newCategory || newCategory === currentCategory) return;
+    currentCategory = newCategory;
+    
+    document.querySelector('.category-link.active')?.classList.remove('active');
+    document.querySelector(`.category-link[data-category="${newCategory}"]`)?.classList.add('active');
+    
+    courseContainer.innerHTML = '';
+    currentPage = 1;
+    totalPages = 1;
+    fetchAndDisplayCourses(currentPage);
+    
+    if (sidebar.classList.contains('is-open')) {
+      sidebar.classList.remove('is-open');
+    }
+  }
+
+  async function fetchAndDisplayCourses(page) {
+    if (isLoading || (page > totalPages && totalPages > 1)) return;
+    
+    isLoading = true;
+    loadingIndicator.style.display = 'flex';
+
+    let url = `${API_BASE_URL}?page=${page}&limit=${limit}&sortBy=sale_start`;
+    if (currentCategory !== 'All Courses') {
+      url += `&category=${encodeURIComponent(currentCategory)}`;
+    }
+    
     try {
       const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
+      if (!response.ok) throw new Error(`Network response was not ok`);
       const data = await response.json();
-      return data; // Returns the full API response { items, totalPages, ... }
+      
+      if (page === 1) totalPages = data.totalPages;
+      displayCourses(data.items);
+      currentPage++;
     } catch (error) {
-      console.error('Failed to fetch courses:', error);
-      if (courseContainer) {
-        courseContainer.innerHTML = '<p class="error-message">Failed to load courses due to a network or CORS error. Please check the browser console for details.</p>';
+      console.error('Fetch error:', error);
+      loadingIndicator.innerHTML = '<span>Failed to load courses.</span>';
+      totalPages = page; // Stop further fetches
+    } finally {
+      isLoading = false;
+      if (currentPage > totalPages) {
+        loadingIndicator.style.display = 'none';
       }
-      return { items: [], totalPages: 0 };
     }
   }
 
   function displayCourses(courses) {
-    if (!courseContainer) {
-      console.error('Error: course-container element not found.');
+    const filteredCourses = courses.filter(course => course.store !== 'Sponsored');
+
+    if (filteredCourses.length === 0 && currentPage === 1) {
+      courseContainer.innerHTML = '<p class="no-courses-msg">No courses found in this category.</p>';
+      loadingIndicator.style.display = 'none';
       return;
     }
-    courseContainer.innerHTML = '';
-    if (courses.length === 0) {
-        courseContainer.innerHTML = '<p>No courses to display.</p>';
-        return;
-    }
-    courses.forEach(course => {
+
+    filteredCourses.forEach(course => {
       const courseCard = document.createElement('div');
       courseCard.classList.add('course-card');
-      const courseLink = document.createElement('a');
-      courseLink.href = course.url;
-      courseLink.target = '_blank';
-      courseLink.rel = 'noopener noreferrer';
-      const courseImage = document.createElement('img');
-      courseImage.src = course.image;
-      courseImage.alt = course.name;
-      courseImage.onerror = () => {
-          courseImage.alt = "Image not available";
-          courseImage.src = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
-      };
-      const courseTitle = document.createElement('h3');
-      courseTitle.textContent = course.name;
-      courseLink.appendChild(courseImage);
-      courseLink.appendChild(courseTitle);
-      courseCard.appendChild(courseLink);
+      // Create separate, clickable links for the main URL and categories
+      courseCard.innerHTML = `
+        <a href="${course.url}" target="_blank" rel="noopener noreferrer" class="card-image-link">
+          <img src="${course.image}" alt="${course.name}" loading="lazy">
+        </a>
+        <div class="card-content">
+          <a href="${course.url}" target="_blank" rel="noopener noreferrer" class="card-title-link">
+            <h3>${course.name}</h3>
+          </a>
+          <div class="course-category">
+            <a href="#" class="category-tag-link" data-category="${course.category}">${course.category}</a>
+            <span>&gt;</span>
+            <a href="#" class="category-tag-link" data-category="${course.subcategory}">${course.subcategory}</a>
+          </div>
+          <div class="card-footer">
+            <div class="course-stats">
+              <span><span class="material-symbols-outlined">star</span> ${course.rating.toFixed(1)}</span>
+              <span><span class="material-symbols-outlined">schedule</span> ${course.lectures} hours</span>
+            </div>
+            <div class="course-price">
+              <span class="price-original">$${course.price.toFixed(2)}</span>
+              <span class="price-sale">$${course.sale_price.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      `;
       courseContainer.appendChild(courseCard);
     });
   }
 
-  function updatePaginationControls(totalPages) {
-    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-    prevButton.disabled = currentPage === 1;
-    nextButton.disabled = currentPage === totalPages;
-  }
+  // --- Event Listeners ---
+  document.getElementById('menu-toggle').addEventListener('click', () => sidebar.classList.toggle('is-open'));
 
-  async function loadPage(page) {
-    const { items, totalPages } = await fetchCourses(page);
-    displayCourses(items);
-    updatePaginationControls(totalPages);
-  }
-
-  prevButton.addEventListener('click', () => {
-    if (currentPage > 1) {
-      currentPage--;
-      loadPage(currentPage);
+  // Use event delegation for all category links
+  document.body.addEventListener('click', (e) => {
+    if (e.target.matches('.category-link') || e.target.matches('.category-tag-link')) {
+      e.preventDefault();
+      handleCategoryChange(e.target.dataset.category);
     }
   });
 
-  nextButton.addEventListener('click', () => {
-    currentPage++;
-    loadPage(currentPage);
-  });
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting && !isLoading) {
+      fetchAndDisplayCourses(currentPage);
+    }
+  }, { rootMargin: '400px' });
 
-  // Initial load
-  loadPage(currentPage);
+  // --- Initial Load ---
+  observer.observe(loadingIndicator);
+  fetchAndDisplayCourses(currentPage);
 });

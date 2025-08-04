@@ -2,35 +2,35 @@
 
 ## Overview
 
-This project is a simple web application that fetches and displays a list of discounted online courses from the Real Discount API. The goal is to present the courses in a visually appealing, responsive, and user-friendly interface.
+This project is a web application that fetches and displays a list of discounted online courses from the Real Discount API. The goal is to present the courses in a visually appealing, responsive, and user-friendly interface that includes a header, a collapsible sidebar for navigation/filtering, and a footer.
 
 ## Project Outline
 
 ### Style & Design
 
-*   **Layout:** A responsive grid or flexbox layout will be used to display course cards.
-*   **Course Cards:** Each course will be represented by a "card" with a soft, deep drop shadow to give it a "lifted" feel.
-*   **Color Palette:** A modern and energetic color palette will be used. The background will have a subtle noise texture for a premium feel.
-*   **Typography:** Expressive fonts will be used with clear hierarchy for headings, subheadings, and body text.
-*   **Interactivity:** Cards will have a subtle hover effect (e.g., a "glow" or slight lift) to indicate interactivity.
-*   **Images:** Course images will be displayed prominently at the top of each card.
+*   **Layout:** A responsive CSS Grid layout manages the main page structure (header, sidebar, main content, footer).
+*   **Header:** A fixed header containing the site title and a hamburger menu icon for mobile.
+*   **Sidebar:** A collapsible sidebar for categories or filters. It's always visible on desktop but slides in on mobile when toggled.
+*   **Main Content:** A flexible grid displays the course cards.
+*   **Footer:** A simple footer with copyright information.
+*   **Course Cards:** Each course is a "card" with a soft drop shadow, a hover effect, and a clean layout for the image and title.
+*   **Color Palette:** A modern and energetic color palette with CSS variables for easy theming.
+*   **Typography:** Expressive, readable fonts with a clear hierarchy.
+*   **Interactivity:** Smooth transitions for the sidebar and hover effects on interactive elements.
 
 ### Features
 
-*   **Course Display:** The application will display a list of courses, showing at least the course image and name.
-*   **Dynamic Loading:** The application is designed to load course data from an API. Due to CORS limitations, it will initially use a local copy of the data.
-*   **Responsive Design:** The layout will adapt to different screen sizes, working well on both desktop and mobile devices.
+*   **Course Display:** The application displays a list of courses in a responsive grid.
+*   **Infinite Scroll:** New courses are loaded automatically as the user scrolls down the page.
+*   **Responsive Design:** The layout adapts seamlessly from desktop to mobile. The sidebar collapses into a hamburger menu on smaller screens.
+*   **SEO Optimized:** The application includes comprehensive meta tags for search engines and social media sharing.
 
-## Current Task: Fix Course Loading and Implement UI
+## Current Task: Implement Modern Responsive Layout
 
-The courses are not loading due to browser CORS security restrictions. The plan is to use a local copy of the API response to build out the UI and then enhance the visual design.
+The goal is to move from a simple page to a full-featured layout with a header, footer, and a collapsible sidebar, using modern CSS techniques.
 
 ### Plan
 
-1.  **Use Local Data:** Modify `main.js` to use the provided JSON data directly, bypassing the live `fetch` call for now.
-2.  **Create Course Cards:** Dynamically generate HTML elements for each course, structuring them as cards containing an image and a title.
-3.  **Style the UI:**
-    *   Implement a flexbox or grid layout in `style.css` for the course container.
-    *   Style the course cards with padding, borders, drop shadows, and responsive properties.
-    *   Add styles for the course images and titles to ensure they are well-formatted.
-4.  **Refine HTML:** Update `index.html` with a clear title and header for the application.
+1.  **Update `index.html`**: Restructure the HTML to include `<header>`, `<footer>`, and `<aside>` elements. Add a hamburger menu button for mobile navigation.
+2.  **Rewrite `style.css`**: Implement a new layout using CSS Grid. Add styles for the header, footer, sidebar, and the responsive logic for the mobile menu.
+3.  **Enhance `main.js`**: Add JavaScript to control the toggling of the sidebar on mobile devices.
