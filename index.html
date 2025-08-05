@@ -100,6 +100,67 @@
             </nav>
         </aside>
 
+        <div class="filters-container">
+            <form class="filters-form" role="search" aria-label="Filter and sort courses" autocomplete="off">
+                <div class="filter-group">
+                    <label for="language-select">Filter by Language:</label>
+                    <select id="language-select" class="filter-select" name="language">
+                        <option value="">All Languages</option>
+                        <option value="Arabic">Arabic</option>
+                        <option value="Azeri">Azeri</option>
+                        <option value="Bengali">Bengali</option>
+                        <option value="Burmese">Burmese</option>
+                        <option value="Danish">Danish</option>
+                        <option value="Dutch">Dutch</option>
+                        <option value="English">English</option>
+                        <option value="Finnish">Finnish</option>
+                        <option value="French">French</option>
+                        <option value="Georgian">Georgian</option>
+                        <option value="German">German</option>
+                        <option value="Greek">Greek</option>
+                        <option value="Guaraní">Guaraní</option>
+                        <option value="Gujarati">Gujarati</option>
+                        <option value="Hebrew">Hebrew</option>
+                        <option value="Hindi">Hindi</option>
+                        <option value="Hungarian">Hungarian</option>
+                        <option value="Indonesian">Indonesian</option>
+                        <option value="Italian">Italian</option>
+                        <option value="Japanese">Japanese</option>
+                        <option value="Korean">Korean</option>
+                        <option value="Malayalam">Malayalam</option>
+                        <option value="Marathi">Marathi</option>
+                        <option value="Pashto">Pashto</option>
+                        <option value="Persian">Persian</option>
+                        <option value="Polish">Polish</option>
+                        <option value="Portuguese">Portuguese</option>
+                        <option value="Punjabi">Punjabi</option>
+                        <option value="Romanian">Romanian</option>
+                        <option value="Russian">Russian</option>
+                        <option value="Simplified Chinese">Simplified Chinese</option>
+                        <option value="Spanish">Spanish</option>
+                        <option value="Tamil">Tamil</option>
+                        <option value="Telugu">Telugu</option>
+                        <option value="Thai">Thai</option>
+                        <option value="Traditional Chinese">Traditional Chinese</option>
+                        <option value="Turkish">Turkish</option>
+                        <option value="Ukrainian">Ukrainian</option>
+                        <option value="Urdu">Urdu</option>
+                        <option value="Vietnamese">Vietnamese</option>
+                        <option value="Zulu">Zulu</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sort-select">Sort by:</label>
+                    <select id="sort-select" class="filter-select" name="sort">
+                        <option value="sale_start">Date</option>
+                        <option value="views">Popular</option>
+                        <option value="rating">Rating</option>
+                        <option value="lectures">Duration</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
         <main class="main-content" id="course-container">
             <div id="loading-indicator">
                 <div class="spinner"></div>
