@@ -35,8 +35,8 @@ a {
 
 .site-container {
     display: grid;
-    grid-template-areas: "header header" "sidebar main" "footer footer";
-    grid-template-rows: var(--header-height) 1fr auto;
+    grid-template-areas: "header header" "sidebar language-filter" "sidebar main" "footer footer";
+    grid-template-rows: var(--header-height) auto 1fr auto;
     grid-template-columns: var(--sidebar-width) 1fr;
     min-height: 100vh;
 }
@@ -54,6 +54,94 @@ a {
 /* ... other layout styles ... */
 
 
+/* Filters */
+.filters-container {
+    grid-area: language-filter;
+    position: sticky;
+    top: var(--header-height);
+    z-index: 100;
+    background: var(--background-color);
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.10);
+    border-radius: 0 0 12px 12px;
+    padding: 18px 32px 10px 32px;
+    margin-bottom: 0;
+    min-width: 0;
+}
+.filters-form {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: 600px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 200px;
+}
+.filter-group label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+    white-space: nowrap;
+}
+.filter-select {
+    flex: 1;
+    padding: 10px 14px;
+    background-color: var(--card-background);
+    border: 1.5px solid #3a3f47;
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-width: 0;
+}
+.filter-select:hover, .filter-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74,144,226,0.15);
+}
+.filter-select option {
+    background-color: var(--card-background);
+    color: var(--text-color);
+    padding: 8px;
+}
+@media (max-width: 768px) {
+    .filters-container {
+        position: sticky;
+        top: var(--header-height);
+        padding: 12px 16px 8px 16px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.12);
+    }
+    .filters-form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        max-width: 100%;
+    }
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        min-width: 0;
+    }
+    .filter-group label {
+        text-align: left;
+        font-size: 0.95rem;
+    }
+    .filter-select {
+        font-size: 1rem;
+        padding: 12px 14px;
+        width: 100%;
+    }
+}
+
 /* Course Card - Tweaked for Join Button */
 
 .course-card {
@@ -70,11 +158,39 @@ a {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
+.card-image-link {
+    position: relative;
+    display: block;
+}
+
 .card-image-link img {
     width: 100%;
     height: 180px;
     object-fit: cover;
     display: block;
+}
+
+.sale-duration-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 2;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.sale-duration-badge.coming-soon {
+    background: rgba(255, 193, 7, 0.9);
+    color: #000;
+    border: 1px solid rgba(255, 193, 7, 0.3);
 }
 
 .card-content {
@@ -333,8 +449,19 @@ a {
 
 @media (max-width: 768px) {
     .site-container {
-        grid-template-areas: "header" "main" "footer";
+        grid-template-areas: "header" "language-filter" "main" "footer";
         grid-template-columns: 1fr;
+    }
+    .language-filter-container {
+        padding: 15px 20px 0 20px;
+    }
+    .language-filter {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .language-filter label {
+        text-align: center;
     }
     .sidebar {
         position: fixed;

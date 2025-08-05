@@ -22,9 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadingIndicator = document.getElementById('loading-indicator');
   const sidebarList = document.getElementById('sidebar-category-list');
   const footerList = document.getElementById('footer-category-list');
+  const languageSelect = document.getElementById('language-select');
+  const sortSelect = document.getElementById('sort-select');
   
   let currentCategory = 'All Courses';
   let currentSubCategory = null;
+  let currentLanguage = '';
+  let currentSortBy = 'sale_start';
   let currentPage = 1;
   let totalPages = 1;
   let isLoading = false;
@@ -82,6 +86,24 @@ document.addEventListener('DOMContentLoaded', () => {
       if(parentLi) parentLi.classList.add('open');
     });
     
+    resetAndFetchCourses();
+  }
+
+  function handleLanguageChange(newLanguage) {
+    if (newLanguage === currentLanguage) return;
+    
+    currentLanguage = newLanguage;
+    resetAndFetchCourses();
+  }
+
+  function handleSortChange(newSortBy) {
+    if (newSortBy === currentSortBy) return;
+    
+    currentSortBy = newSortBy;
+    resetAndFetchCourses();
+  }
+
+  function resetAndFetchCourses() {
     // Correctly clear only the course cards, leaving the loader intact
     const existingCards = courseContainer.querySelectorAll('.course-card');
     existingCards.forEach(card => card.remove());
@@ -101,12 +123,15 @@ document.addEventListener('DOMContentLoaded', () => {
     isLoading = true;
     loadingIndicator.classList.add('loading');
 
-    let url = `${API_BASE_URL}?page=${page}&limit=${limit}&sortBy=sale_start`;
+    let url = `${API_BASE_URL}?page=${page}&limit=${limit}&sortBy=${currentSortBy}`;
     if (currentCategory !== 'All Courses') {
       url += `&category=${encodeURIComponent(currentCategory)}`;
       if (currentSubCategory) {
           url += `&subcategory=${encodeURIComponent(currentSubCategory)}`;
       }
+    }
+    if (currentLanguage) {
+      url += `&language=${encodeURIComponent(currentLanguage)}`;
     }
     
     try {
@@ -133,6 +158,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function formatSaleDuration(saleStart) {
+    const now = new Date();
+    const saleDate = new Date(saleStart);
+    
+    const diffInMs = now.getTime() - saleDate.getTime();
+    
+    // If sale_start is in the future, show "Coming soon"
+    if (diffInMs < 0) {
+      return 'Coming soon';
+    }
+    
+    // Convert to seconds first
+    const diffInSeconds = Math.floor(diffInMs / 1000);
+    
+    // Calculate days, hours, minutes
+    const days = Math.floor(diffInSeconds / (24 * 60 * 60));
+    const hours = Math.floor((diffInSeconds % (24 * 60 * 60)) / (60 * 60));
+    const minutes = Math.floor((diffInSeconds % (60 * 60)) / 60);
+    
+    if (days > 0) {
+      return `${days}d ago`;
+    } else if (hours > 0) {
+      return `${hours}h ago`;
+    } else if (minutes > 0) {
+      return `${minutes}m ago`;
+    } else {
+      return 'Just now';
+    }
+  }
+
   function displayCourses(courses) {
     const filteredCourses = courses.filter(course => course.store !== 'Sponsored');
 
@@ -148,10 +203,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     filteredCourses.forEach(course => {
+      const saleDuration = formatSaleDuration(course.sale_start);
+      const isComingSoon = saleDuration === 'Coming soon';
       const courseCard = document.createElement('div');
       courseCard.classList.add('course-card');
       courseCard.innerHTML = `
         <a href="${course.url}" target="_blank" rel="noopener noreferrer" class="card-image-link">
+          <div class="sale-duration-badge ${isComingSoon ? 'coming-soon' : ''}">${saleDuration}</div>
           <img src="${course.image}" alt="${course.name}" loading="lazy">
         </a>
         <div class="card-content">
@@ -182,6 +240,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Event Listeners ---
   document.getElementById('menu-toggle').addEventListener('click', () => sidebar.classList.toggle('is-open'));
+
+  // Language filter event listener
+  languageSelect.addEventListener('change', (e) => {
+    handleLanguageChange(e.target.value);
+  });
+
+  // Sort filter event listener
+  sortSelect.addEventListener('change', (e) => {
+    handleSortChange(e.target.value);
+  });
 
   document.body.addEventListener('click', (e) => {
     const categoryLink = e.target.closest('.category-link, .category-tag-link');
