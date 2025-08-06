@@ -259,8 +259,8 @@ a {
 
 .site-container {
     display: grid;
-    grid-template-areas: "header header" "sidebar language-filter" "sidebar main" "footer footer";
-    grid-template-rows: var(--header-height) auto 1fr auto;
+    grid-template-areas: "header header" "sidebar filters" "sidebar main" "sidebar sections" "footer footer";
+    grid-template-rows: var(--header-height) auto 1fr auto auto;
     grid-template-columns: var(--sidebar-width) 1fr;
     min-height: 100vh;
 }
@@ -280,7 +280,7 @@ a {
 
 /* Filters */
 .filters-container {
-    grid-area: language-filter;
+    grid-area: filters;
     /* position: sticky; */
     /* top: var(--header-height); */
     z-index: 100;
@@ -368,35 +368,6 @@ a {
         display: flex !important;
     }
     
-    /* Show Filters button styles */
-    .show-filters-btn {
-        display: block !important;
-        width: 100%;
-        padding: 12px;
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        margin-bottom: 10px;
-        transition: background-color 0.2s;
-    }
-    
-    .show-filters-btn:hover {
-        background-color: #3a7ac8;
-    }
-    
-    /* Hide filters by default on mobile */
-    .filters-container {
-        display: none;
-    }
-    
-    .filters-container.is-visible {
-        display: block;
-    }
-}
 
 /* Course Card - Tweaked for Join Button */
 
@@ -752,7 +723,7 @@ a {
 
 @media (max-width: 768px) {
     .site-container {
-        grid-template-areas: "header" "language-filter" "main" "footer";
+        grid-template-areas: "header" "filters" "main" "sections" "footer";
         grid-template-columns: 1fr;
     }
     .language-filter-container {
@@ -1166,8 +1137,15 @@ a {
 }
 
 /* Page Sections Styles */
+.sections-container {
+    grid-area: sections;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 25px;
+}
+
 .page-section {
-    grid-column: 1 / -1;
     background: var(--card-background);
     border-radius: var(--card-border-radius);
     margin: 30px 0;
@@ -1321,6 +1299,10 @@ a {
 
 /* Mobile Responsive for Page Sections */
 @media (max-width: 768px) {
+    .sections-container {
+        padding: 0 15px;
+    }
+    
     .page-section {
         margin: 20px 0;
     }
@@ -1436,7 +1418,7 @@ a {
         </aside>
 
         <div class="filters-container" id="filters">
-            <button type="button" class="show-filters-btn" aria-label="Show filters" aria-expanded="false">Show Filters</button>
+            <!-- <button type="button" class="show-filters-btn" aria-label="Show filters" aria-expanded="false">Show Filters</button> -->
             <form class="filters-form" role="search" aria-label="Filter and sort courses" autocomplete="off">
                 <div class="filter-group mobile-category-group" style="display:none;">
                   <label for="mobile-category-select">Category:</label>
@@ -1673,7 +1655,8 @@ a {
         </main>
         
         <!-- Additional Pages Sections -->
-        <section id="about" class="page-section">
+        <div class="sections-container">
+            <section id="about" class="page-section">
             <div class="section-container">
                 <h2>About Us</h2>
                 <div class="content-grid">
@@ -1908,6 +1891,7 @@ a {
                 </div>
             </div>
         </section>
+        </div>
         
         <footer class="site-footer">
             <div class="footer-content">
