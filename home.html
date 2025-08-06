@@ -281,8 +281,8 @@ a {
 /* Filters */
 .filters-container {
     grid-area: language-filter;
-    position: sticky;
-    top: var(--header-height);
+    /* position: sticky; */
+    /* top: var(--header-height); */
     z-index: 100;
     background: var(--background-color);
     box-shadow: 0 2px 12px 0 rgba(0,0,0,0.10);
@@ -337,8 +337,8 @@ a {
 }
 @media (max-width: 768px) {
     .filters-container {
-        position: sticky;
-        top: var(--header-height);
+        /* position: sticky; */
+        /* top: var(--header-height); */
         padding: 12px 16px 8px 16px;
         border-radius: 0 0 10px 10px;
         box-shadow: 0 2px 8px 0 rgba(0,0,0,0.12);
@@ -363,6 +363,35 @@ a {
         font-size: 1rem;
         padding: 12px 14px;
         width: 100%;
+    }
+    .mobile-category-group, .mobile-subcategory-group {
+        display: flex !important;
+    }
+    
+    /* Show Filters button styles */
+    .show-filters-btn {
+        display: block !important;
+        width: 100%;
+        padding: 12px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 10px;
+        transition: background-color 0.2s;
+    }
+    
+    .show-filters-btn:hover {
+        background-color: #3a7ac8;
+    }
+    
+    /* Hide filters by default on mobile */
+    
+    .filters-container.is-visible {
+        display: block;
     }
 }
 
@@ -742,12 +771,26 @@ a {
         height: 100%;
         transform: translateX(-100%);
         z-index: 1002;
+        background: #212429;
+        transition: transform 0.3s ease-in-out;
     }
     .sidebar.is-open {
         transform: translateX(0);
     }
     .menu-toggle {
         display: block;
+    }
+    .sidebar .close-sidebar {
+        display: block;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 2rem;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1003;
+        cursor: pointer;
     }
 }
 
@@ -1348,6 +1391,8 @@ a {
         padding: 40px 20px;
         border-radius: 0;
     }
+    
+    
 }
     </style>
   	
@@ -1380,8 +1425,16 @@ a {
             </nav>
         </aside>
 
-        <div class="filters-container">
+        <div class="filters-container" id="filters">
             <form class="filters-form" role="search" aria-label="Filter and sort courses" autocomplete="off">
+                <div class="filter-group mobile-category-group" style="display:none;">
+                  <label for="mobile-category-select">Category:</label>
+                  <select id="mobile-category-select" class="filter-select" name="mobile-category"></select>
+                </div>
+                <div class="filter-group mobile-subcategory-group" style="display:none;">
+                  <label for="mobile-subcategory-select">Subcategory:</label>
+                  <select id="mobile-subcategory-select" class="filter-select" name="mobile-subcategory"></select>
+                </div>
                 <div class="filter-group">
                     <label for="language-select">Filter by Language:</label>
                     <select id="language-select" class="filter-select" name="language">
@@ -2119,21 +2172,31 @@ a {
   });
 
   document.body.addEventListener('click', (e) => {
+    const submenuIcon = e.target.closest('.submenu-toggle-icon');
+    const submenuHeader = e.target.closest('.has-submenu > a');
     const categoryLink = e.target.closest('.category-link, .category-tag-link');
+
+    // 1. Handle submenu expand/collapse ONLY if clicking the expand arrow
+    if (submenuIcon && submenuHeader) {
+      e.preventDefault();
+      const parentLi = submenuHeader.parentElement;
+      if (parentLi) {
+        parentLi.classList.toggle('open');
+      }
+      return; // Don't also trigger category selection
+    }
+
+    // 2. Handle category selection
     if (categoryLink) {
       e.preventDefault();
       const category = categoryLink.dataset.category;
       const parentCategory = categoryLink.dataset.parentCategory;
       handleCategoryChange(parentCategory || category, parentCategory ? category : null);
-    }
-    
-    const submenuHeader = e.target.closest('.has-submenu > a');
-    if (submenuHeader) {
-        const parentLi = submenuHeader.parentElement;
-        if(parentLi && !e.target.closest('.submenu')) {
-             e.preventDefault();
-             parentLi.classList.toggle('open');
-        }
+      // Ensure submenu is open if this is a main category with submenu
+      const parentLi = categoryLink.closest('.has-submenu');
+      if (parentLi && !parentLi.classList.contains('open')) {
+        parentLi.classList.add('open');
+      }
     }
   });
 
@@ -2143,10 +2206,109 @@ a {
     }
   }, { rootMargin: '400px' });
 
+  // --- Mobile Category Population ---
+  const mobileCategorySelect = document.getElementById('mobile-category-select');
+  const mobileSubcategorySelect = document.getElementById('mobile-subcategory-select');
+  
+  function populateMobileCategories() {
+    if (!mobileCategorySelect) return;
+    mobileCategorySelect.innerHTML = '<option value="">All Categories</option>';
+    categoryData.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat.name;
+      opt.textContent = cat.name;
+      mobileCategorySelect.appendChild(opt);
+    });
+    populateMobileSubcategories();
+  }
+  
+  function populateMobileSubcategories() {
+    if (!mobileSubcategorySelect) return;
+    const selectedCat = mobileCategorySelect.value;
+    mobileSubcategorySelect.innerHTML = '<option value="">All Subcategories</option>';
+    const cat = categoryData.find(c => c.name === selectedCat);
+    if (cat && cat.subcategories) {
+      cat.subcategories.forEach(sub => {
+        const opt = document.createElement('option');
+        opt.value = sub.name;
+        opt.textContent = sub.name;
+        mobileSubcategorySelect.appendChild(opt);
+      });
+    }
+  }
+  
+  // Mobile category change handlers
+  if (mobileCategorySelect) {
+    mobileCategorySelect.addEventListener('change', function() {
+      populateMobileSubcategories();
+      // On mobile, trigger the same filter as desktop
+      if (window.innerWidth <= 768) {
+        handleCategoryChange(mobileCategorySelect.value || 'All Courses', null);
+      }
+    });
+  }
+  
+  if (mobileSubcategorySelect) {
+    mobileSubcategorySelect.addEventListener('change', function() {
+      // On mobile, trigger the same filter as desktop
+      if (window.innerWidth <= 768) {
+        const cat = mobileCategorySelect.value || 'All Courses';
+        const subcat = mobileSubcategorySelect.value || null;
+        handleCategoryChange(cat, subcat);
+      }
+    });
+  }
+  
+  // Mobile: Show category/subcategory selects in filter
+  function updateMobileCategoryFilters() {
+    const isMobile = window.innerWidth <= 768;
+    const catGroup = document.querySelector('.mobile-category-group');
+    const subcatGroup = document.querySelector('.mobile-subcategory-group');
+    if (catGroup && subcatGroup) {
+      catGroup.style.display = isMobile ? 'flex' : 'none';
+      subcatGroup.style.display = isMobile ? 'flex' : 'none';
+    }
+    // Hide sidebar on mobile
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.style.display = isMobile ? 'none' : '';
+  }
+  
+  // Mobile: Show Filters toggle
+  const showFiltersBtn = document.querySelector('.show-filters-btn');
+  const filtersContainer = document.querySelector('.filters-container');
+  
+  function updateShowFiltersBtn() {
+    if (window.innerWidth <= 768) {
+      showFiltersBtn.style.display = 'block';
+      filtersContainer.classList.remove('is-visible');
+      showFiltersBtn.setAttribute('aria-expanded', 'false');
+    } else {
+      showFiltersBtn.style.display = 'none';
+      filtersContainer.classList.add('is-visible');
+    }
+  }
+  
+  if (showFiltersBtn) {
+    showFiltersBtn.addEventListener('click', function() {
+      const isVisible = filtersContainer.classList.toggle('is-visible');
+      showFiltersBtn.setAttribute('aria-expanded', isVisible ? 'true' : 'false');
+      showFiltersBtn.textContent = isVisible ? 'Hide Filters' : 'Show Filters';
+    });
+  }
+  
   // --- Initial Load ---
   populateCategories();
+  populateMobileCategories();
+  updateMobileCategoryFilters();
+  updateShowFiltersBtn();
   observer.observe(loadingIndicator);
   fetchAndDisplayCourses(currentPage);
+  
+  // Event listeners for responsive behavior
+  window.addEventListener('resize', () => {
+    updateMobileCategoryFilters();
+    updateShowFiltersBtn();
+  });
 });
 
 // Social Media Share Functions
