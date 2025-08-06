@@ -11,6 +11,8 @@
     <link rel="canonical" href="https://dailyudemyfree.blogspot.com/" />
     
     <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="Images/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="Images/favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="Images/favicon.png">
     <link rel="manifest" href="/site.webmanifest">
     
@@ -257,9 +259,9 @@ a {
 
 .site-container {
     display: grid;
-    grid-template-areas: "header header" "sidebar filters" "sidebar main" "sidebar sections" "footer footer";
-    grid-template-rows: var(--header-height) auto 1fr auto auto;
-    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-areas: "header header" "language-filter language-filter" "main main" "footer footer";
+    grid-template-rows: var(--header-height) auto 1fr auto;
+    grid-template-columns: 1fr;
     min-height: 100vh;
 }
 
@@ -278,7 +280,7 @@ a {
 
 /* Filters */
 .filters-container {
-    grid-area: filters;
+    grid-area: language-filter;
     /* position: sticky; */
     /* top: var(--header-height); */
     z-index: 100;
@@ -366,6 +368,33 @@ a {
         display: flex !important;
     }
     
+    /* Show Filters button styles */
+    .show-filters-btn {
+        display: block !important;
+        width: 100%;
+        padding: 12px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 10px;
+        transition: background-color 0.2s;
+    }
+    
+    .show-filters-btn:hover {
+        background-color: #3a7ac8;
+    }
+    
+    /* Hide filters by default on mobile */
+
+    
+    .filters-container.is-visible {
+        display: block;
+    }
+}
 
 /* Course Card - Tweaked for Join Button */
 
@@ -721,7 +750,7 @@ a {
 
 @media (max-width: 768px) {
     .site-container {
-        grid-template-areas: "header" "filters" "main" "sections" "footer";
+        grid-template-areas: "header" "language-filter" "main" "footer";
         grid-template-columns: 1fr;
     }
     .language-filter-container {
@@ -1135,15 +1164,8 @@ a {
 }
 
 /* Page Sections Styles */
-.sections-container {
-    grid-area: sections;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    padding: 0 25px;
-}
-
 .page-section {
+    grid-column: 1 / -1;
     background: var(--card-background);
     border-radius: var(--card-border-radius);
     margin: 30px 0;
@@ -1297,10 +1319,6 @@ a {
 
 /* Mobile Responsive for Page Sections */
 @media (max-width: 768px) {
-    .sections-container {
-        padding: 0 15px;
-    }
-    
     .page-section {
         margin: 20px 0;
     }
@@ -1361,7 +1379,7 @@ a {
         border-right: none;
     }
     .site-container {
-        /* padding-left: var(--sidebar-width); */
+        padding-left: var(--sidebar-width);
         grid-column-gap: 0;
     }
     .main-content {
@@ -1653,8 +1671,7 @@ a {
         </main>
         
         <!-- Additional Pages Sections -->
-        <div class="sections-container">
-            <section id="about" class="page-section">
+        <section id="about" class="page-section">
             <div class="section-container">
                 <h2>About Us</h2>
                 <div class="content-grid">
@@ -1889,7 +1906,6 @@ a {
                 </div>
             </div>
         </section>
-        </div>
         
         <footer class="site-footer">
             <div class="footer-content">
