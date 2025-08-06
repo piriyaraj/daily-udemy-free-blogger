@@ -1911,10 +1911,6 @@ a {
         
         <footer class="site-footer">
             <div class="footer-content">
-                <h3>Categories</h3>
-                <div class="footer-links" id="footer-category-list">
-                    <!-- This will be dynamically populated by main.js -->
-                </div>
                 <p class="copyright">&copy; 2025 Daily Udemy Free. All Rights Reserved.</p>
             </div>
         </footer>
@@ -1943,7 +1939,6 @@ a {
   const courseContainer = document.getElementById('course-container');
   const loadingIndicator = document.getElementById('loading-indicator');
   const sidebarList = document.getElementById('sidebar-category-list');
-  const footerList = document.getElementById('footer-category-list');
   const languageSelect = document.getElementById('language-select');
   const sortSelect = document.getElementById('sort-select');
   
@@ -1960,7 +1955,7 @@ a {
   // --- Functions ---
   function populateCategories() {
       sidebarList.innerHTML = '<li><a href="#" class="category-link active" data-category="All Courses">All Courses</a></li>';
-      footerList.innerHTML = '';
+
 
       for (const category of categoryData) {
           const footerColumn = document.createElement('div');
@@ -1977,7 +1972,6 @@ a {
           }
 
           footerColumn.innerHTML = footerHTML;
-          footerList.appendChild(footerColumn);
 
           sidebarLi.innerHTML = `
               <a href="#" class="category-link" data-category="${category.name}">
