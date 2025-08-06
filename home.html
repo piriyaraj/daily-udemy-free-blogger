@@ -389,6 +389,9 @@ a {
     }
     
     /* Hide filters by default on mobile */
+    .filters-container {
+        display: none;
+    }
     
     .filters-container.is-visible {
         display: block;
@@ -1392,7 +1395,14 @@ a {
         border-radius: 0;
     }
     
+    /* Desktop: Show filters by default, hide show filters button */
+    .filters-container {
+        display: block !important;
+    }
     
+    .show-filters-btn {
+        display: none !important;
+    }
 }
     </style>
   	
@@ -1426,6 +1436,7 @@ a {
         </aside>
 
         <div class="filters-container" id="filters">
+            <button type="button" class="show-filters-btn" aria-label="Show filters" aria-expanded="false">Show Filters</button>
             <form class="filters-form" role="search" aria-label="Filter and sort courses" autocomplete="off">
                 <div class="filter-group mobile-category-group" style="display:none;">
                   <label for="mobile-category-select">Category:</label>
@@ -2038,6 +2049,7 @@ a {
   }
 
   async function fetchAndDisplayCourses(page) {
+    // console.log('Fetching courses for page:', page);
     if (isLoading || (page > totalPages && totalPages > 1)) return;
     
     isLoading = true;
@@ -2278,6 +2290,8 @@ a {
   const filtersContainer = document.querySelector('.filters-container');
   
   function updateShowFiltersBtn() {
+    if (!showFiltersBtn || !filtersContainer) return;
+    
     if (window.innerWidth <= 768) {
       showFiltersBtn.style.display = 'block';
       filtersContainer.classList.remove('is-visible');
